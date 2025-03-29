@@ -1,4 +1,6 @@
-import express from 'express';
+//authenticateToken changed to getUserFromToken by Lydia
+
+import express from "express";
 const router = express.Router();
 import {
   createUser,
@@ -6,18 +8,18 @@ import {
   saveBook,
   deleteBook,
   login,
-} from '../../controllers/user-controller.js';
+} from "../../controllers/user-controller.js";
 
 // import middleware
-import { authenticateToken } from '../../services/auth.js';
+import { getUserFromToken } from "../../services/auth.js"; //authenticateToken changed to getUserFromToken by Lydia
 
 // put authMiddleware anywhere we need to send a token for verification of user
-router.route('/').post(createUser).put(authenticateToken, saveBook);
+router.route("/").post(createUser).put(getUserFromToken, saveBook);
 
-router.route('/login').post(login);
+router.route("/login").post(login);
 
-router.route('/me').get(authenticateToken, getSingleUser);
+router.route("/me").get(getUserFromToken, getSingleUser);
 
-router.route('/books/:bookId').delete(authenticateToken, deleteBook);
+router.route("/books/:bookId").delete(getUserFromToken, deleteBook);
 
 export default router;
