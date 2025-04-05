@@ -1,14 +1,17 @@
-import express, { Application, Request as ExpressRequest } from "express";
+import express, { Application } from "express";
 import path from "node:path";
-import db from "./config/connection.js";
-import routes from "./routes/index.js";
-import { ApolloServer } from "apollo-server-express";
+import connectToDb from "./config/connection.js";
+// import routes from "./routes/index.js";
+import { ApolloServer } from "@apollo/server";
+import { expressMiddleware } from "@apollo/server/express4";
 import typeDefs from "./schemas/typeDefs.js";
 import resolvers from "./schemas/resolvers.js";
 import { getUserFromToken } from "./services/auth.js";
 
 const app: Application = express();
 const PORT = process.env.PORT || 3001;
+
+await connectToDb();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -19,32 +22,30 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // Cast routes to any to avoid type conflicts
-app.use(routes as any);
+// app.use(routes as any);
 
 const startApolloServer = async () => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({ req }) => {
-      // Cast req to ExpressRequest so that getUserFromToken receives the expected type
-      const user = getUserFromToken(req as ExpressRequest);
-      return { user };
-    },
   });
 
   await server.start();
-  // Cast app to any so that Apollo Server accepts it without type conflicts
-  server.applyMiddleware({ app: app as any });
-};
+  // Cast app to any so that Apollo Server accepts it without type conflicts (server should now respond to any /graphql requests)
+  app.use(
+    "/graphql",
+    expressMiddleware(server as any, { context: getUserFromToken as any })
+  );
 
-startApolloServer();
-
-db.once("open", () => {
+  // db.once("open", () => {
   app.listen(PORT, () => {
     console.log(`🌍 Now listening on localhost:${PORT}`);
     console.log(`🚀 GraphQL endpoint: http://localhost:${PORT}/graphql`);
   });
-});
+  // });
+};
+
+startApolloServer();
 
 // import express from "express";
 // import path from "node:path";

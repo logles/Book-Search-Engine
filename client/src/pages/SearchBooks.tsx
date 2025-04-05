@@ -50,7 +50,7 @@ const SearchBooks = () => {
         title: book.volumeInfo.title,
         description: book.volumeInfo.description,
         image: book.volumeInfo.imageLinks?.thumbnail || "",
-        link: book.volumeInfo.infoLink || "",
+        // link: book.volumeInfo.infoLink || "",
       }));
 
       setSearchedBooks(bookData);
@@ -76,7 +76,7 @@ const SearchBooks = () => {
 
     try {
       // Execute the SAVE_BOOK mutation
-      const { data } = await saveBookMutation({
+      await saveBookMutation({
         variables: {
           input: {
             bookId: bookToSave.bookId,

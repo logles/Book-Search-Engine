@@ -34,7 +34,7 @@ const resolvers = {
         if (!foundUser) {
           throw new AuthenticationError("User not found");
         }
-        return { ...foundUser.toObject(), _id: foundUser._id.toString() };
+        return { ...foundUser.toObject(), _id: String(foundUser._id) };
       }
       throw new AuthenticationError("Not authenticated");
     },
@@ -54,12 +54,8 @@ const resolvers = {
       if (!user) {
         throw new Error("User creation failed");
       }
-      const token = signToken(
-        user.username,
-        user.password,
-        user._id.toString()
-      );
-      return { token, user: { ...user.toObject(), _id: user._id.toString() } };
+      const token = signToken(user.username, user.password, String(user._id));
+      return { token, user: { ...user.toObject(), _id: String(user._id) } };
     },
 
     // Logs in a user by verifying credentials, signs a token, and returns both
@@ -75,12 +71,8 @@ const resolvers = {
       if (!correctPw) {
         throw new AuthenticationError("Wrong password!");
       }
-      const token = signToken(
-        user.username,
-        user.password,
-        user._id.toString()
-      );
-      return { token, user: { ...user.toObject(), _id: user._id.toString() } };
+      const token = signToken(user.username, user.password, String(user._id));
+      return { token, user: { ...user.toObject(), _id: String(user._id) } };
     },
 
     // Saves a book to a user's savedBooks array
@@ -89,6 +81,7 @@ const resolvers = {
       { input }: { input: Book },
       context: { user?: UserInterface }
     ): Promise<UserInterface | null> => {
+      console.log(context.user, "context.user");
       if (context.user) {
         const updatedUser = await User.findOneAndUpdate(
           { _id: context.user._id },
@@ -98,7 +91,7 @@ const resolvers = {
         if (!updatedUser) {
           throw new Error("Could not update user with saved book");
         }
-        return { ...updatedUser.toObject(), _id: updatedUser._id.toString() };
+        return { ...updatedUser.toObject(), _id: String(updatedUser._id) };
       }
       throw new AuthenticationError("You need to be logged in!");
     },
@@ -118,7 +111,7 @@ const resolvers = {
         if (!updatedUser) {
           throw new Error("Could not update user after removing book");
         }
-        return { ...updatedUser.toObject(), _id: updatedUser._id.toString() };
+        return { ...updatedUser.toObject(), _id: String(updatedUser._id) };
       }
       throw new AuthenticationError("You need to be logged in!");
     },

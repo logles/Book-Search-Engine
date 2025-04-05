@@ -12,7 +12,7 @@ router.use("/api", apiRoutes);
 
 // serve up react front-end in production
 router.use((_req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "../../client/dist/index.html")); //updated from /client/build/ by lydia
+  res.sendFile(path.join(__dirname, "../../../client/index.html")); //updated from /client/build/ by lydia
 });
 
 export default router;
