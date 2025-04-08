@@ -8,6 +8,13 @@ import typeDefs from "./schemas/typeDefs.js";
 import resolvers from "./schemas/resolvers.js";
 import { getUserFromToken } from "./services/auth.js";
 
+//this code fixes the _dir error in deployment
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const app: Application = express();
 const PORT = process.env.PORT || 3001;
 
