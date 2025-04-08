@@ -26,9 +26,9 @@ app.use(express.json());
 
 // If in production, serve static assets from the dist folder
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../../dist")));
-  app.use((_req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, "../../client/index.html")); //updated from /client/build/ by lydia
+  app.use(express.static(path.join(__dirname, "../../client/dist")));
+  app.use("*", (_req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, "../../client/dist/index.html")); //updated from /client/build/ by lydia
   });
 }
 
