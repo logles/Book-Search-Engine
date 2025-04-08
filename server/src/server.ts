@@ -1,3 +1,4 @@
+import type { Request, Response } from "express";
 import express, { Application } from "express";
 import path from "node:path";
 import connectToDb from "./config/connection.js";
@@ -8,7 +9,7 @@ import typeDefs from "./schemas/typeDefs.js";
 import resolvers from "./schemas/resolvers.js";
 import { getUserFromToken } from "./services/auth.js";
 
-//this code fixes the _dir error in deployment
+//this code fixes the _dir error in
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
@@ -25,7 +26,10 @@ app.use(express.json());
 
 // If in production, serve static assets from the dist folder
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../dist")));
+  app.use(express.static(path.join(__dirname, "../../dist")));
+  app.use((_req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, "../../client/index.html")); //updated from /client/build/ by lydia
+  });
 }
 
 // Cast routes to any to avoid type conflicts
